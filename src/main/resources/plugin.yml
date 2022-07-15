@@ -1,0 +1,5 @@
+name: tEconomy
+version: '${version}'
+main: br.com.thiaago.teconomy.TEconomy
+api-version: 1.19
+description: Simple economy plugin

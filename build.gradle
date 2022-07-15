@@ -1,0 +1,80 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.7.10'
+}
+
+group = 'br.com.thiaago.teconomy'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    maven {
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+}
+
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation 'com.github.SaiintBrisson.command-framework:bukkit:1.3.0'
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+}
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release = targetJavaVersion
+    }
+}
+
+jar {
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    manifest {
+        attributes(
+                'Implementation-Title': 'tEconomy',
+                "Main-Class": "br.com.thiaago.teconomy.TEconomy"
+        )
+    }
+    destinationDirectory = file("C:\\Users\\thiaa\\Documents\\Programação\\Server 1.8.8\\plugins")
+    archivesBaseName = 'tEconomy'
+    version = "1.0";
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
